@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "BaiDuOCR.h"
 
-NSString* const apiKey = @"074a6c4e8c386b11a8eaa00a04195175";
+NSString* const apiKey = @"your api key";
 
 @interface ViewController ()
 
