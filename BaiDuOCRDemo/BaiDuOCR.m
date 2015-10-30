@@ -84,11 +84,13 @@ NSString* payOCRURL = @"http://apis.baidu.com/idl_baidu/baiduocrpay/idlocrpaid";
 
 -(void)OCRJPGImageData:(NSData *)imageData completionHandler:(void (^)(NSDictionary *ocrResult, NSError * error))completionHandler
 {
+
+
     // generate based64 + urlencode imagedata;
     NSString* imageBase64String = [imageData base64EncodedString];
     NSString* imageBaes64URLEncodeString = [imageBase64String urlEncodeString];
 
-    //configure request
+    //configure request, try the free version first, if runover, then try the pay version
     NSMutableURLRequest* freeOCRRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:freeOCRURL]];
     freeOCRRequest.HTTPMethod = @"POST";
     [freeOCRRequest addValue: self.apiKey

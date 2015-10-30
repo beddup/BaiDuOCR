@@ -99,7 +99,7 @@ NSString* payOCRURL = @"http://apis.baidu.com/idl_baidu/baiduocrpay/idlocrpaid";
     NSData* httpBody = [requestBody dataUsingEncoding:NSUTF8StringEncoding];
     freeOCRRequest.HTTPBody = httpBody;
 
-    // create data task
+    // create data task, try free version first , if runover ,try the pay version
     NSURLSession* session =[NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
 
     NSURLSessionDataTask* task = [session dataTaskWithRequest:freeOCRRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable freeOCRError) {
