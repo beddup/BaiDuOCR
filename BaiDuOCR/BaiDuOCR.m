@@ -126,13 +126,15 @@ NSString* payOCRURL = @"http://apis.baidu.com/idl_baidu/baiduocrpay/idlocrpaid";
                             completionHandler(payOCRResult, nil);
                         }else{
                             // fail
-                            [self  OCRErroeWithResult:payOCRResult];
+                            NSError* error = [self  OCRErroeWithResult:payOCRResult];
+                            completionHandler(payOCRResult, error);
                         }
                     }
                 }];
                 [payTask resume];
             }else{
-                [self  OCRErroeWithResult:freeOCRResult];
+                NSError* error = [self  OCRErroeWithResult:freeOCRResult];
+                completionHandler(freeOCRResult, error);
             }
         }
     }];
