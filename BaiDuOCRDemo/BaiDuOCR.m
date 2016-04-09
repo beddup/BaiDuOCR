@@ -85,7 +85,6 @@ NSString* payOCRURL = @"http://apis.baidu.com/idl_baidu/baiduocrpay/idlocrpaid";
 -(void)OCRJPGImageData:(NSData *)imageData completionHandler:(void (^)(NSDictionary *ocrResult, NSError * error))completionHandler
 {
 
-
     // generate based64 + urlencode imagedata;
     NSString* imageBase64String = [imageData base64EncodedString];
     NSString* imageBaes64URLEncodeString = [imageBase64String urlEncodeString];
@@ -103,15 +102,13 @@ NSString* payOCRURL = @"http://apis.baidu.com/idl_baidu/baiduocrpay/idlocrpaid";
 
     // create data task
     NSURLSession* session =[NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-
+    // first try to use free ocr, if fail(may be overrun), use the pay-need ocr
     NSURLSessionDataTask* task = [session dataTaskWithRequest:freeOCRRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable freeOCRError) {
         if (freeOCRError) {
-            // connection error
             completionHandler(nil, freeOCRError);
         }else{
             NSDictionary* freeOCRResult = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:NULL];
             if ([freeOCRResult[@"errNum"] integerValue] == 0) {
-                // success
                 completionHandler(freeOCRResult, nil);
             }else if ([freeOCRResult[@"errNum"] integerValue] == 300202){
                 // free call overrun, try payOCRURL
@@ -119,15 +116,12 @@ NSString* payOCRURL = @"http://apis.baidu.com/idl_baidu/baiduocrpay/idlocrpaid";
                 payOCRRequest.URL = [NSURL URLWithString:payOCRURL];
                 NSURLSessionDataTask* payTask = [session dataTaskWithRequest:payOCRRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable payOCRError) {
                     if (payOCRError) {
-                        //connection error;
                         completionHandler(nil,payOCRError);
                     }else{
                         NSDictionary* payOCRResult = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:NULL];
                         if ([payOCRResult[@"errNum"] integerValue] == 0) {
-                            // success
                             completionHandler(payOCRResult, nil);
                         }else{
-                            // fail
                             NSError* error = [self  OCRErroeWithResult:payOCRResult];
                             completionHandler(payOCRResult, error);
                         }
